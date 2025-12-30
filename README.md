@@ -1,70 +1,158 @@
-# Getting Started with Create React App
+# 📁 Microservices-Based Distributed File Storage System (DFS)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A **Distributed File Storage System** built using **Spring Boot microservices** and **React**, designed to store and retrieve files across **multiple storage nodes** with **automatic service discovery, replication, and streaming-based file transfer**.
 
-## Available Scripts
+This project demonstrates real-world **distributed systems concepts** such as **Eureka-based service discovery**, **Feign client communication**, **octet-stream file transfer**, and **replica-based fault tolerance**.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 📦 Technologies Used
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Backend
+- Java 17
+- Spring Boot
+- Spring Cloud Netflix Eureka
+- Spring Cloud OpenFeign
+- Spring Data JPA
+- H2 / RDBMS
+- REST APIs
+- Octet-stream file transfer
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Frontend
+- React
+- Axios
+- HTML / CSS
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Key Highlights
 
-### `npm run build`
+✔ Distributed storage across multiple node servers  
+✔ Automatic node discovery using **Eureka Server**  
+✔ No hardcoded IPs or ports for storage nodes  
+✔ Backend dynamically connects to available nodes  
+✔ File replication across multiple nodes  
+✔ Octet-stream based upload & download (supports any file format)  
+✔ Metadata managed centrally  
+✔ Used H2 DB to store filename and chunk details (can be replaced with any other DB)
+✔ React UI for file upload, listing, and download  
+✔ Scalable, fault-tolerant design  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## System Architecture
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+                         ┌──────────────────────────┐
+                         │        React UI          │
+                         │  (Upload / Download UI)  │
+                         └─────────────┬────────────┘
+                                       │
+                                       │ HTTP (Octet Stream)
+                                       ▼
+                    ┌────────────────────────────────────┐
+                    │           Backend Server            │
+                    │      (Metadata + Coordinator)       │
+                    │                                    │
+                    │  - File Metadata Management         │
+                    │  - Chunking & Replica Selection     │
+                    │  - Feign Clients                    │
+                    └─────────────┬──────────────────────┘
+                                  │  Service Name
+                                  │  (node-server)
+                                  ▼
+                         ┌──────────────────┐
+                         │   Eureka Server   │
+                         │ (Service Registry)│
+                         └─────────┬────────┘
+                                   │
+          ┌────────────────────────┼────────────────────────┐
+          ▼                        ▼                        ▼
+┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
+│  Storage Node 1  │    │  Storage Node 2  │    │  Storage Node 3  │
+│  (node-server)   │    │  (node-server)   │    │  (node-server)   │
+│                  │    │                  │    │                  │
+│ - Store Chunks   │    │ - Store Chunks   │    │ - Store Chunks   │
+│ - Serve Chunks   │    │ - Serve Chunks   │    │ - Serve Chunks   │
+└──────────────────┘    └──────────────────┘    └──────────────────┘
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🧩 Core Components
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 1️⃣ Eureka Server
+- Acts as a **service registry**
+- All storage nodes register automatically
+- Backend fetches live node list dynamically
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 2️⃣ Backend Server (Coordinator)
+- Manages file metadata
+- Splits files into chunks
+- Replicates chunks across multiple nodes
+- Uses **Feign Client** to communicate with nodes
+- No explicit node IP/port configuration
+- Handles upload, download, and file listing
 
-## Learn More
+### 3️⃣ Storage Node Servers
+- Store file chunks locally
+- Register themselves with Eureka
+- Serve chunks on demand
+- Replication ensures fault tolerance
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 4️⃣ Frontend (React)
+- Upload files of **any format**
+- View uploaded files
+- Download files seamlessly
+- Uses raw byte (octet-stream) transfers
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🔗 APIs Overview
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+| Method | Endpoint | Description |
+|------|--------|-------------|
+| POST | `/files/upload` | Upload file using octet-stream |
+| GET | `/files/list` | List stored files (metadata) |
+| GET | `/files/{fileId}` | Download file |
+| GET | `/eureka` | Eureka dashboard |
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🔄 File Upload Flow
 
-### Making a Progressive Web App
+1. User uploads file from React UI
+2. Backend receives raw byte stream
+3. File metadata stored centrally
+4. File is split into chunks
+5. Chunks are replicated across multiple nodes
+6. Node selection is dynamic via Eureka
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## 📥 File Download Flow
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. User requests file from UI
+2. Backend fetches metadata
+3. Chunks are retrieved from available nodes
+4. File is reconstructed
+5. Streamed back to the client
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🔐 Fault Tolerance & Scalability
 
-### `npm run build` fails to minify
+- Multiple replicas per file chunk
+- Node failure handled automatically
+- New storage nodes can join dynamically
+- No system restart required
+- Horizontal scaling supported
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 🛠️ Running the Project
+
+### Start Order
+1. Eureka Server
+2. Storage Node Servers (any number)
+3. Backend Server
+4. Frontend (React)
