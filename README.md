@@ -66,6 +66,7 @@ This project demonstrates real-world **distributed systems concepts** such as **
                          └─────────┬────────┘
                                    │
           ┌────────────────────────┼────────────────────────┐
+          │                        │                        │
           ▼                        ▼                        ▼
 ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
 │  Storage Node 1  │    │  Storage Node 2  │    │  Storage Node 3  │
@@ -74,7 +75,6 @@ This project demonstrates real-world **distributed systems concepts** such as **
 │ - Store Chunks   │    │ - Store Chunks   │    │ - Store Chunks   │
 │ - Serve Chunks   │    │ - Serve Chunks   │    │ - Serve Chunks   │
 └──────────────────┘    └──────────────────┘    └──────────────────┘
-
 
 ---
 
