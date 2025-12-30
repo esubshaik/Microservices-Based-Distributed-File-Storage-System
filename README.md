@@ -68,14 +68,7 @@ This project demonstrates real-world **distributed systems concepts** such as **
           ┌────────────────────────┼────────────────────────┐
           │                        │                        │
           ▼                        ▼                        ▼
-┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
-│  Storage Node 1  │    │  Storage Node 2  │    │  Storage Node 3  │
-│  (node-server)   │    │  (node-server)   │    │  (node-server)   │
-│                  │    │                  │    │                  │
-│ - Store Chunks   │    │ - Store Chunks   │    │ - Store Chunks   │
-│ - Serve Chunks   │    │ - Serve Chunks   │    │ - Serve Chunks   │
-└──────────────────┘    └──────────────────┘    └──────────────────┘
-
+         Node1                   Node2                    Node3
 ---
 
 ## 🧩 Core Components
@@ -114,7 +107,6 @@ This project demonstrates real-world **distributed systems concepts** such as **
 | POST | `/files/upload` | Upload file using octet-stream |
 | GET | `/files/list` | List stored files (metadata) |
 | GET | `/files/{fileId}` | Download file |
-| GET | `/eureka` | Eureka dashboard |
 
 ---
 
